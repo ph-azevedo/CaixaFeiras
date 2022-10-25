@@ -1,9 +1,6 @@
-import sqlite3, os
-## 9788543102818
+import sqlite3, os, keyboard, time
 con = sqlite3.connect('db.db')
 cur = con.cursor()
-
-import keyboard, time
 
 def menu():
     print('O que deseja fazer?')
@@ -21,6 +18,7 @@ def menu():
             Venda()
             cls()
             break
+
 
 class Consulta():
 
@@ -85,8 +83,6 @@ class Consulta():
             print('Erro: Tente novamente')
             time.sleep(2)
             self.titulo()
-
-
 
 
 class Venda:
