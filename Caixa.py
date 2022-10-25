@@ -21,19 +21,25 @@ def menu():
             cls()
 
 def consulta():
-    con2 = sqlite3.connect('db.db')
-    cur2 = con2.cursor()
-    erase()
-    isbn = input('Leia o código de barras\n')
-    query = cur2.execute(f'SELECT descricao, valor FROM estoque where isbn={isbn}')
-    result = query.fetchone()
-    cls()
-    print(f'Título: {result[0]}\nPreço: R$ {result[1]}')
-    cur2.close()
-    con2.close()
-    time.sleep(3)
-    cls()
-    menu()
+    try:
+        con2 = sqlite3.connect('db.db')
+        cur2 = con2.cursor()
+        erase()
+        isbn = input('Leia o código de barras\n')
+        query = cur2.execute(f'SELECT descricao, valor FROM estoque where isbn={isbn}')
+        result = query.fetchone()
+        cls()
+        print(f'Título: {result[0]}\nPreço: R$ {result[1]}')
+        cur2.close()
+        con2.close()
+        time.sleep(3)
+        cls()
+        menu()
+    except:
+        print('Código de barras inválido. Tente novamente.')
+        time.sleep(2)
+        cls()
+        consulta()
 
 
 class Venda:
@@ -79,14 +85,21 @@ class Venda:
 
     def add_prod(self):
         erase()
-        prod = input('Leia o código de barras\n')
-        quant = input('Digite a quantidade:\n')
-        item = cur.execute(f'SELECT ISBN, VALOR FROM ESTOQUE WHERE ISBN={prod}')
-        result = item.fetchall()[0]
-        total = float(result[1]) * float(quant)
-        cur.execute(f'INSERT INTO ITEMVENDA(ISBN, QUANTIDADE, VALOR, TOTAL, VENDA) VALUES({result[0]}, {quant}, {result[1]}, {total}, {self.vendaid})')
-        cls()
-        self.menu_venda()
+        try:
+            prod = input('Leia o código de barras\n')
+            item = cur.execute(f'SELECT ISBN, VALOR FROM ESTOQUE WHERE ISBN={prod}')
+            result = item.fetchall()[0]
+            quant = input('Digite a quantidade:\n')
+            if quant == '':
+                quant = '1'
+            total = float(result[1]) * float(quant)
+            cur.execute(f'INSERT INTO ITEMVENDA(ISBN, QUANTIDADE, VALOR, TOTAL, VENDA) VALUES({result[0]}, {quant}, {result[1]}, {total}, {self.vendaid})')
+            cls()
+            self.menu_venda()
+        except:
+            print('Código de barras inválido. Tente novamente.')
+            self.add_prod()
+
 
     def lista_prods(self):
         total = 0.00
